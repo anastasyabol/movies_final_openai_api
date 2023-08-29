@@ -1,1 +1,0 @@
-omdb_url = "http://www.omdbapi.com/?apikey=d6b7eb59&t="
