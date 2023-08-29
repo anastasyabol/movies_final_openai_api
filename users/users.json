@@ -1,0 +1,50 @@
+{
+  "1111": {
+    "id": "1111",
+    "username": "Alice",
+    "email": "email1@example.com",
+    "password": "pbkdf2:sha256:260000$ciTkkTaKECyFEZdr$982fe3963bbc5f817d59df00bfa52e21cf441c854cadb36e4003224b20e0b526"
+  },
+  "2": {
+    "id": "2",
+    "username": "Bob",
+    "email": "ana@bolshem.com",
+    "password": "pbkdf2:sha256:260000$eG1wWZwX9BE6Kiq9$74b78c619255d24ca327d6946b6164a6764bd0dc6adf007aa2eaa6895f7978ef"
+  },
+  "0": {
+    "id": "0",
+    "username": "RANDOM",
+    "email": "1@email.com",
+    "password": "pbkdf2:sha256:260000$iDXpcYyV6hTnqzMX$035d4fa6adf1278632146e22d63b947247d98a5049441827f5d999a6a16ad491"
+  },
+  "1": {
+    "id": "1",
+    "username": "Lena",
+    "email": "lena@lena.ru",
+    "password": "pbkdf2:sha256:260000$TQH23QQHtN0qGZyi$057de509c2604ba1fdc26d30cb05112532b1b1b269176a2580a2a979549a2e5f"
+  },
+  "5": {
+    "id": "5",
+    "username": "Yana",
+    "email": "aa@aa.com",
+    "password": "pbkdf2:sha256:260000$eehx3UAbIn5DnCIc$77f2fa23ce35e49d2e6ecc06e1ddc82f7e314b14e1b3fb46585cf2477deee6ba"
+  },
+  "6": {
+    "id": "6",
+    "username": "Lena",
+    "email": "2@example.com",
+    "password": "pbkdf2:sha256:260000$Daa4akO2zd0pz1vs$f13f60fd54ae02846112776a945905aa82a9777e6079a595eb2752be3ed98427"
+  },
+  "7": {
+    "id": "7",
+    "username": "Masha",
+    "email": "m@m.com",
+    "password": "pbkdf2:sha256:600000$tMPXMixeptIjrtQ9$ea104c086969c7da0aebca597aa7a18092825509704dcaf5decc132319080dc9"
+  },
+  "8": {
+    "id": "8",
+    "username": "Masha",
+    "email": "mm@m.com",
+    "password": "pbkdf2:sha256:600000$O6MTZ24xvMdiZdQZ$4b92b1205adaacaff6bb39d541746c4713ca22063cbf506c0a630f55be7cfce2"
+  }
+}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Reviews for {{ title }} </title>
+{% endblock %}
+
+{% block body %}
+<div class="list-movies-title">
+    <h1> {{ username }}'s Movie App</h1>
+    <div class="filter-links">
+        <a href="/user/{{ user_id }}">Back to all movies</a>
+    </div>
+</div>
+
+<div>
+    {% for msg in get_flashed_messages() %}
+    <div class="flash">{{msg}}</div>
+    {% endfor %}
+</div>
+
+<div class="flex-container-review">
+    <div>
+        <a href="https://www.imdb.com/title/{{ imdbID }}/" target="_blank">
+            <img class="movie-poster-update" src="{{ img }}" title="Open IMDB for full info">
+        </a>
+    </div>
+
+    <div class="user_review">
+        <div class="movie-details">
+        <div class="movie-title">{{ title }}</div>
+        <div class="movie-year">{{ year }}</div>
+        <div class="movie-year">{{ director }}</div>
+        <br> <br>
+
+        <form action="{{ movie_id }}" method="post">
+            <label for="review_rating">My Rating:</label>
+            <input type="number" id="review_rating" name="review_rating" value="{{ rating }}" min="1" max="10">
+            <label for="review_title">Title:  </label>
+            <input type="text" id="review_title" name="review_title" minlength="8">
+            <br><br>
+            <label for="review">My review:</label>
+            <textarea id="review" name="review" rows="5" cols="39" minlength="50" required></textarea><br><br>
+            <input class="btn" type="submit" value="Add a review">
+        </form></div>
+    </div>
+
+    {% for review in reviews %}
+    <div class="review">
+        <p class="movie-title">{{ review['review_title'] }} </p>
+        <p class="review_text"> {{ review['review_text'] }}</p>
+        <p class="review_data"> {{ review['username'] }} | {{ review['username'] }}'s rating: {{ review['review_rating']}} | Added on {{ review['review_date'] }} </p>
+    </div>
+        {% endfor %}
+
+
+
+</div>
+
+
+{% endblock %}

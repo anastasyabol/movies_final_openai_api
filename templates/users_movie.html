@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>My Movies list</title>
+{% endblock %}
+
+{% block body %}
+<div class="list-movies-title">
+    <h1> {{ username }}'s Movie App</h1>
+    <div class="filter-links">|
+    <a href="/user/{{ user_id }}/sort/1">by Year</a> |
+    <a href="/user/{{ user_id }}/sort/2">by Rating</a>  &#x21E7; |
+    <a href="/user/{{ user_id }}/sort/3">by Rating</a> &#8681; |
+    <a href="/user/{{ user_id }}/sort/4"> by Name</a> |
+</div>
+</div>
+
+<div class="form-section">
+    <form action="/user/{{ user_id }}" method="post" class="form-group">
+        <label for="title">Add new movie</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Add new movie...">
+        <button type="submit">Add</button>
+    </form>
+
+</div>
+<div>
+{% for msg in get_flashed_messages() %}
+<div class="flash">{{msg}}</div>
+{% endfor %}</div>
+<div class="movie-flex">
+    {% if movies != None %}
+    {% for movie in movies %}
+    <div class="movie">
+        <div class="overlay-container">
+        <a href="https://www.imdb.com/title/{{ movie['imdbID'] }}/" target="_blank" {% if movie['notes'] %}title="{{ movie['notes'] }}"{% endif %}>
+            <img class="movie-poster" src="{{ movie['img'] }}"></a>
+        <div class="overlay"> {{ movie['rating'] }} <br>
+        {% if movie['director']|length < 20 %}
+{{ movie['director'] }}
+{% else %}
+{{ movie['director'][:17] }} ...
+{% endif %}
+        </div></div>
+        <div class="movie-details">
+            <div class="movie-title">{{ movie['title'] }}</div>
+            <div class="movie-year">{{ movie['year'] }}</div>
+        </div>
+        <div class="movie-actions">
+            <a href="/user/{{ user_id }}/delete/{{ movie['id'] }}" class="btn">Delete</a>
+            <a href="/user/{{ user_id }}/update/{{ movie['id'] }}" class="btn">Update</a>
+            <a href="/user/{{ user_id }}/review/{{ movie['id'] }}" class="btn">Reviews</a>
+
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    Start adding movies :)
+    {% endif %}
+</div>
+
+{% endblock %}

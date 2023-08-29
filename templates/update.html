@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Update {{ title }} </title>
+{% endblock %}
+
+{% block body %}
+<div class="list-movies-title">
+    <h1> {{ username }}'s Movie App</h1>
+    <div class="filter-links">
+    <a href="/user/{{ user_id }}">Back to all movies</a>
+</div>
+</div>
+<div>
+{% for msg in get_flashed_messages() %}
+<div class="flash">{{msg}}</div>
+{% endfor %}</div>
+
+<div class="flex-container">
+    <div>
+    <a href="https://www.imdb.com/title/{{ imdbID}}/" target="_blank">
+    <img class="movie-poster-update" src="{{ img }}" title="Open IMDB for full info"></a>
+    </div>
+<div>
+<form action="{{ movie_id }}" method="post">
+<label for="title">Title:</label> <br>
+<input type="text" id="title" name="title" value="{{ title }}" readonly><br><br>
+<label for="director">Director:</label> <br>
+<input type="text" id="director" name="director" value="{{ director }}" readonly><br><br>
+<label for="year">Year:</label> <br>
+<input type="text" id="year" name="year" value="{{ year }}" readonly><br><br>
+<label for="rating">Rating:</label> <br>
+<input type="text" id="rating" name="rating" value="{{ rating }}"><br><br>
+<label for="notes">Notes:</label> <br>
+<textarea id="notes" name="notes" rows="5" cols="21" >{{ notes }} </textarea><br><br>
+<input class="btn" type="submit" value="Update">
+</form>
+</div>
+</div>
+{% endblock %}

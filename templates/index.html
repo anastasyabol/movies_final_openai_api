@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Movies App </title>
+{% endblock %}
+
+{% block body %}
+
+
+
+{% if username == "anonymous" %}
+    <div class="list-movies-title">
+    <h1> Movie App</h1>
+    <div class="filter-links">
+    <a href="/register">Sign Up</a> |
+    <a href="/login">Log in</a>
+    </div></div>
+{% else %}
+    <div class="list-movies-title">
+    <h1> {{ username }}'s Movie App</h1>
+    <div class="filter-links">
+    <a href="/user/{{ user_id }}">My Movies</a>
+    </div>
+    </div>
+{% endif %}
+{% for msg in get_flashed_messages() %}
+<div class="flash">{{msg}}</div>
+{% endfor %}
+<div class="random-flex">
+    <div class="random-movie">
+        <div class="overlay-container">
+        <a href="https://www.imdb.com/title/{{ movie['imdbID'] }}/" target="_blank" title="{{ movie['notes'] }}">
+            <img class="random-poster" src="{{ movie['img'] }}"></a>
+        <div class="overlay"> {{ movie['rating'] }} <br>
+        {% if movie['director']|length < 20 %}
+{{ movie['director'] }}
+{% else %}
+{{ movie['director'][:17] }} ...
+{% endif %}
+        </div></div>
+        <div class="movie-details">
+            <div class="movie-title">{{ movie['title'] }}</div>
+            <div class="movie-year">{{ movie['year'] }}</div>
+
+        </div>
+        <div class="movie-plot">{% if movie['plot'] != "N/A" %}
+{{ movie['plot'] }}
+{% else %}
+ ...
+{% endif %}</div>
+    </div>
+
+        {% endblock %}

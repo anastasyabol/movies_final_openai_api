@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Movies App </title>
+{% endblock %}
+
+{% block body %}
+
+
+
+{% if username == "anonymous" %}
+    <div class="list-movies-title">
+    <h1> Movie App</h1>
+    <div class="filter-links">
+    <a href="/register">Sign Up</a> |
+    <a href="/login">Log in</a>
+    </div></div>
+{% else %}
+    <div class="list-movies-title">
+    <h1> {{ username }}'s Movie App</h1>
+    <div class="filter-links">
+    <a href="/user/{{ user_id }}">My Movies</a>
+    </div>
+    </div>
+{% endif %}
+
+<div class="random-flex">
+{% if error == 404 %}
+Page not found
+{% else %}
+Access denied
+{% endif %}
+</div>
+
+{% endblock %}

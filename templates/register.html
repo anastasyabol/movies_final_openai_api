@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block head %}<title> Movie App Registration</title>{% endblock %}
+{% block body %}
+    <div class="list-movies-title">
+    <h1> Movie App</h1>
+    <h2> Registration</h2>
+    <div class="filter-links">
+    <a href="/login">Log in</a>
+    </div>
+</div>
+{% for msg in get_flashed_messages() %}
+<div class="flash">{{msg}}</div>
+{% endfor %}
+
+<div class="container-form">
+<form action="/register" method="post" class="form-contact">
+<p><label>Name: </label> <input type="text" name="name" value="" >
+<p><label>Email: </label> <input type="text" name="email" value=""  >
+<p><label>Password: </label> <input type="password" name="psw" value="" >
+<p><input class="btn" type="submit" value="Sign up" >
+</form>
+</div>
+{% endblock %}

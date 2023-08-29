@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
+body {
+  background-color: #f2f2f2;
+  font-family: 'Raleway', sans-serif;
+}
+
+.list-movies-title {
+  background-color: #337ab7;
+  padding: 5px;
+  text-align: center;
+  color: #fff;
+  font-family: 'Raleway', sans-serif;
+  margin-bottom: 20px;
+}
+
+.flash {
+  text-align: center;
+  background-color: #E1F0F9;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #bce8f1;
+  color: #31708f;
+}
+
+.form-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+
+.form-control {
+  width: 300px;
+  padding: 5px;
+}
+
+button[type="submit"] {
+  background-color: #337ab7;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.movie-flex {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px;
+    gap: 40px;
+}
+
+
+.movie {
+  width: 264px;
+  background-color: #E1F0F9;
+  border: 5px solid #ccc;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.movie-poster {
+  width: 246px;
+  height: 359px;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.movie-details {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.movie-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.movie-year {
+ font-weight: bold;
+  color: #888;
+}
+
+.movie-year {
+  color: #888;
+}
+
+.movie-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  background-color: #337ab7;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  margin: 5px;
+  text-decoration: none;
+}
+
+.filter-links a {
+    color: #fff;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+
+}
+
+.flex-container > div {
+  background-color: #f1f1f1;
+  margin: 20px;
+  text-align: center;
+  line-height: 20px;
+}
+
+.movie-poster-update {
+
+  height: 346px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.overlay-container {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top:     10;
+  background: #337ab7;
+  width: 100%;
+  transition: .5s ease;
+  opacity:0;
+  color: white;
+  font-size: 18px;
+  padding: none;
+  text-align: center;
+  height: 43px;
+}
+
+.overlay-container:hover .overlay {
+  opacity: 2;
+
+}
+
+.bottom-title {
+  background-color: #337ab7;
+  text-align: center;
+  color: #fff;
+  font-family: 'Raleway', sans-serif;
+  height: 40px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.bottom-links a {
+    text-align: center;
+    color: #fff;
+}
+
+.container-form {
+  padding-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  clear: both;
+}
+
+.container-form input[type=text], input[type=password] {
+  width: 100%;
+  clear: both;
+}
+
+.container-form input[type=submit] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+  clear: both;
+}
+
+.random-flex {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px;
+    gap: 40px;
+}
+
+
+.random-movie {
+  width: 45%;
+  height: 75%;
+  background-color: #E1F0F9;
+  border: 5px solid #ccc;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.random-poster {
+  max-width: ;
+  height: 400px;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 5px solid #ccc;
+}
+
+/* Styles for the review class */
+.review {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    line-height: 1.4;
+    width: 100%; /* Set each review item to take the full width of the container */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    align-items: center;
+}
+
+.user_review {
+    padding-left: 20px;
+}
+
+/* Styles for the flex-container-review class */
+.flex-container-review {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 40%; /* Set to 60% of the screen width */
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+.flex-container-review img {
+    max-width: 240px;
+    margin-right: 20px;
+}
+
+.review_text{
+ background: #f2f2f2;
+  font-style: italic;
+}
+
+.review_data {
+text-align: right;
+}
+
+.gpt-link {
+    width: calc(100% - 20px); /* Width adjusted to match the three links above */
+    margin-top: 10px; /* Adjust as needed */
+}
+
+
