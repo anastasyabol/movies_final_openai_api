@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine, update, func
 from sqlalchemy.orm import sessionmaker
-from .data_manager_interface import DataManagerInterface, Status
-from .database import *
-from .omdb_url import omdb_url
+from data_manager_interface import DataManagerInterface, Status
+from database import *
+from omdb_url import omdb_url
 import requests
 
 
@@ -73,10 +73,23 @@ class SQLiteDataManager(DataManagerInterface):
         session.close()
         return Status.NOT_FOUND
 
-    def add_new_movie_to_db(self, new_movie_title, user_id=0):
+    def movie_by_imdbID(self, imdbID):
         session = self.Session()
-        url = omdb_url
+        movie_query = session.query(Movie).filter_by(imdbID=imdbID)
+        movie = movie_query.first()
+        print(movie)
+        if movie:
+            return Status.OK
+        else:
+            return self.add_new_movie_to_db("", user_id=0, imdbID=imdbID)
+
+    def add_new_movie_to_db(self, new_movie_title, user_id=0, imdbID=None):
+        session = self.Session()
+        url = omdb_url + "t="
         request = requests.post(url + new_movie_title + "&plot=full")
+        if imdbID is not None:
+            url = omdb_url + "i="
+            request = requests.post(url + imdbID + "&plot=full")
         api_data = request.json()
         if "Error" in api_data:
             return Status.NOT_FOUND
@@ -177,6 +190,40 @@ class SQLiteDataManager(DataManagerInterface):
         session.add(new_review)
         session.commit()
 
-# db_uri = "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
-# data_manager = SQLiteDataManager(db_uri)
-# data_manager.get_reviews(1)
+
+    def recommended_movies(self, movie_id):
+        session = self.Session()
+        movie_query = session.query(Movie).filter_by(id=movie_id)
+        movie = movie_query.first()
+
+        if movie:
+            if movie.recomend1 is None or movie.recomend2 is None or movie.recomend3 is None:
+                pass
+            # Handle case where all columns are null
+            # Do something
+            else:
+                print(movie.recomend1, movie.recomend2, movie.recomend3)
+                self.movie_by_imdbID(movie.recomend1)
+                self.movie_by_imdbID(movie.recomend2)
+                self.movie_by_imdbID(movie.recomend3)
+                imdb_ids = [movie.recomend1, movie.recomend2, movie.recomend3]
+
+                # Query the database for movies with the specified IMDb IDs
+                movies_query = session.query(Movie).filter(Movie.imdbID.in_(imdb_ids)).limit(3)
+                movies = movies_query.all()
+
+                for movie in movies:
+                    print(movie.imdbID)
+
+        # Handle case where at least one column is not null
+        # Do something else
+        else:
+            pass
+    # Movie with given movie_id was not found
+    # Handle this case if needed
+
+
+
+db_uri = "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
+data_manager = SQLiteDataManager(db_uri)
+data_manager.recommended_movies(2)
