@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>My Movies list</title>
+{% endblock %}
+
+{% block body %}
+<div class="list-movies-title">
+    <h1> {{ username }}'s Movie App</h1>
+    <div class="filter-links">
+    <a href="/user/{{ user_id }}">Back to all movies</a>
+</div>
+</div>
+
+<div class="form-section">
+    <form action="/user/{{ user_id }}" method="post" class="form-group">
+        <label for="title">Add new movie</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Add new movie...">
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<div>
+{% for msg in get_flashed_messages() %}
+<div class="flash">{{msg}}</div>
+{% endfor %}</div>
+
+<div class="rec-title"> If you liked <span class="rec-title-mid"> {{ current_movie['title'] }}</span> try:</div>
+
+<div class="movie-flex">
+    {% if movies != None %}
+    {% for movie in movies %}
+    {% if movie['imdbID'] != current_movie['imdbID'] %}
+    <div class="movie">
+        <div class="overlay-container">
+        <a href="https://www.imdb.com/title/{{ movie['imdbID'] }}/" target="_blank" {% if movie['notes'] %}title="{{ movie['notes'] }}"{% endif %}>
+            <img class="movie-poster" src="{{ movie['img'] }}"></a>
+        <div class="overlay"> {{ movie['rating'] }} <br>
+        {% if movie['director']|length < 20 %}
+{{ movie['director'] }}
+{% else %}
+{{ movie['director'][:17] }} ...
+{% endif %}
+        </div></div>
+        <div class="movie-details">
+            {% if movie['title']|length < 27 %}
+ <div class="movie-title">{{ movie['title'] }}</div>
+{% else %}
+ <div class="movie-title">{{ movie['title'][:27] }}...</div>
+{% endif %}
+            <div class="movie-year">{{ movie['year'] }}</div>
+        </div>
+        <div class="recomended-actions">
+            <a href="/user/{{ user_id }}/add/{{ movie['id'] }}" class="btn-rec">Add to my library</a>
+            <a href="/user/{{ user_id }}/recommend/{{ movie['id'] }}" class="btn-rec">Recommended by AI</a>
+
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% else %}
+    Start adding movies :)
+    {% endif %}
+</div>
+
+{% endblock %}
+   <!-- <a href="/user/{{ user_id }}/update/{{ movie['id'] }}" class="btn-rec">Add to my library</a> */ -->
