@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, update, func
 from sqlalchemy.orm import sessionmaker
-from data_manager_interface import DataManagerInterface, Status
-from database import *
-from omdb_url import omdb_url
+from datamanager.data_manager_interface import DataManagerInterface, Status
+from datamanager.database import *
+from datamanager.omdb_url import omdb_url
 import requests
+from datamanager.gpt import gpt_recomendation
 
 
 class SQLiteDataManager(DataManagerInterface):
@@ -73,15 +74,17 @@ class SQLiteDataManager(DataManagerInterface):
         session.close()
         return Status.NOT_FOUND
 
-    def movie_by_imdbID(self, imdbID):
+    def add_from_rec(self, user_id: int, movie_id: int):
         session = self.Session()
-        movie_query = session.query(Movie).filter_by(imdbID=imdbID)
-        movie = movie_query.first()
-        print(movie)
-        if movie:
-            return Status.OK
+        query = session.query(UserMovie).filter_by(movie_id=movie_id).first()
+        if query:
+            return Status.ALREADY_ADDED
         else:
-            return self.add_new_movie_to_db("", user_id=0, imdbID=imdbID)
+            user_movie = UserMovie(user_id=user_id, movie_id=movie_id)
+            session.add(user_movie)
+            session.commit()
+            session.close()
+            return Status.OK
 
     def add_new_movie_to_db(self, new_movie_title, user_id=0, imdbID=None):
         session = self.Session()
@@ -111,10 +114,8 @@ class SQLiteDataManager(DataManagerInterface):
             notes=notes)
         if new_movie.img == "N/A":
             new_movie.img = 'https://st4.depositphotos.com/14953852/22772/v/450/depositphotos_227725020-stock-illustration-image-available-icon-flat-vector.jpg'
-        print(vars(new_movie))
         session.add(new_movie)
         session.flush()
-        print(new_movie.id)
         if user_id != 0:
             user_movie = UserMovie(user_id=user_id, movie_id=new_movie.id)
             session.add(user_movie)
@@ -140,6 +141,19 @@ class SQLiteDataManager(DataManagerInterface):
             return movie_info
         else:
             return None
+
+    def movie_info_by_id(self, movie_id: int):
+        """Get the information of a specific movie for a user."""
+        session = self.Session()
+        query = session.query(Movie).filter(Movie.id == movie_id).first()
+
+        if query:
+            movie_info = vars(query)
+            session.close()
+            return movie_info
+        else:
+            return None
+
 
     def movie_update(self, user_id: int, movie_id: int, rating_upd: str, notes_upd: str):
         session = self.Session()
@@ -190,40 +204,58 @@ class SQLiteDataManager(DataManagerInterface):
         session.add(new_review)
         session.commit()
 
+    def movie_by_imdbID(self, imdbID):
+        session = self.Session()
+        movie_query = session.query(Movie).filter_by(imdbID=imdbID)
+        movie = movie_query.first()
+        if movie:
+            return Status.OK
+        else:
+            if self.add_new_movie_to_db("", user_id=0, imdbID=imdbID) == Status.OK:
+                return Status.OK
+            else:
+                return Status.NOT_FOUND
 
     def recommended_movies(self, movie_id):
         session = self.Session()
         movie_query = session.query(Movie).filter_by(id=movie_id)
         movie = movie_query.first()
+        print("********")
+        print(movie)
 
         if movie:
             if movie.recomend1 is None or movie.recomend2 is None or movie.recomend3 is None:
-                pass
-            # Handle case where all columns are null
-            # Do something
-            else:
-                print(movie.recomend1, movie.recomend2, movie.recomend3)
-                self.movie_by_imdbID(movie.recomend1)
-                self.movie_by_imdbID(movie.recomend2)
-                self.movie_by_imdbID(movie.recomend3)
-                imdb_ids = [movie.recomend1, movie.recomend2, movie.recomend3]
+                rec1, rec2, rec3 = gpt_recomendation(movie.title)
+                if movie.recomend1 is None:
+                    movie.recomend1 = rec1
+                if movie.recomend2 is None:
+                    movie.recomend2 = rec2
+                if movie.recomend3 is None:
+                    movie.recomend3 = rec3
+                session.commit()
+                session.flush()
 
-                # Query the database for movies with the specified IMDb IDs
+            imdb_ids = [movie.recomend1, movie.recomend2, movie.recomend3]
+            statuses = []
+
+            for imdb_id in imdb_ids:
+                status = self.movie_by_imdbID(imdb_id)
+                statuses.append(status)
+
+            if all(status == Status.OK for status in statuses):
+                # All requests were successful, proceed with querying the database
                 movies_query = session.query(Movie).filter(Movie.imdbID.in_(imdb_ids)).limit(3)
-                movies = movies_query.all()
+                rec_movies_data = movies_query.all()
 
-                for movie in movies:
-                    print(movie.imdbID)
+                for movie in rec_movies_data:
+                    print(movie.imdbID, movie.id, movie.title)
+                return rec_movies_data
+            else:
+                return Status.NOT_FOUND
 
-        # Handle case where at least one column is not null
-        # Do something else
         else:
-            pass
-    # Movie with given movie_id was not found
-    # Handle this case if needed
-
-
+            return Status.NOT_FOUND
 
 db_uri = "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
 data_manager = SQLiteDataManager(db_uri)
-data_manager.recommended_movies(2)
+print(data_manager.recommended_movies(86))

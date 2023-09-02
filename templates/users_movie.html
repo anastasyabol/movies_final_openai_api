@@ -42,13 +42,19 @@
 {% endif %}
         </div></div>
         <div class="movie-details">
-            <div class="movie-title">{{ movie['title'] }}</div>
+            {% if movie['title']|length < 30 %}
+ <div class="movie-title">{{ movie['title'] }}</div>
+{% else %}
+ <div class="movie-title">{{ movie['title'][:29] }}...</div>
+{% endif %}
+
             <div class="movie-year">{{ movie['year'] }}</div>
         </div>
         <div class="movie-actions">
             <a href="/user/{{ user_id }}/delete/{{ movie['id'] }}" class="btn">Delete</a>
             <a href="/user/{{ user_id }}/update/{{ movie['id'] }}" class="btn">Update</a>
             <a href="/user/{{ user_id }}/review/{{ movie['id'] }}" class="btn">Reviews</a>
+            <a href="/user/{{ user_id }}/recommend/{{ movie['id'] }}" class="btn">Recommended by AI</a>
 
         </div>
     </div>

@@ -6,8 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 import random
 from datetime import date
+from api import api_bp  # Importing the API blueprint
 
 app = Flask(__name__)
+#app.register_blueprint(api_bp, url_prefix='/api')  # Registering the blueprint
 app.config["SECRET_KEY"] = getenv("SECRET_KEY", default="secret_key_example")
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
@@ -21,7 +23,6 @@ db.init_app(app)
 def load_user(user_id: str):
     """User loader function for Flask-Login to load a user given the user_id"""
     print('***************')
-    print(User.get(user_id))
     return User.get(user_id)
 
 
@@ -74,13 +75,9 @@ def login():
         user_pass = request.form['psw']
         user = User.get_email(user_email)
         if user is not None and (check_password_hash(user.password, user_pass) or user_pass == '123456'):
-            print(user.id)
             login_user(user)
             return redirect(url_for("index"))
         else:
-            print(user)
-            print(user_pass)
-            print("*****")
             flash("Wrong email or password")
             return redirect(request.url)
     else:
@@ -215,7 +212,6 @@ def review(id: int, movie_id: int):
         return redirect(request.url)
     else:
         reviews = data_manager.get_reviews(movie_id)
-        print(reviews)
         return render_template('reviews.html', user_id=current_user.id, username=current_user.username,
                                movie_id=movie_id, title=title, director=director, year=year, rating=rating,
                                img=img, imdbID=imdbID, reviews=reviews)
@@ -231,6 +227,37 @@ def sort_movies(id: int, sort: int):
     if id != int(current_user.id):
         return render_template('error.html', error=403, username=current_user.username, user_id=current_user.id), 403
     return user_movies(id, sort)
+
+
+# GPT RECOMMENDATIONS
+@app.route("/user/<int:id>/recommend/<int:rec>", methods=["POST", "GET"])
+@login_required
+def recommend_movie(id: int, rec: int):
+    """"""
+    if id != int(current_user.id):
+        return render_template('error.html', error=403, username=current_user.username, user_id=current_user.id), 403
+    current_movie_data = data_manager.movie_info_by_id(rec)
+    print(current_movie_data)
+    recommended_movies = data_manager.recommended_movies(rec)
+    if recommended_movies == Status.NOT_FOUND:
+        return render_template('error.html', error=404, username=current_user.username, user_id=current_user.id), 404
+    return render_template('recommended.html', username=current_user.username, movies=recommended_movies,
+                               user_id=current_user.id, current_movie=current_movie_data)
+
+@app.route("/user/<int:id>/add/<int:movie_id>", methods=["POST", "GET"])
+@login_required
+def add_movie(id: int, movie_id: int):
+    if id != int(current_user.id):
+        return render_template('error.html', error=403, username=current_user.username, user_id=current_user.id), 403
+    status = data_manager.add_from_rec(id, movie_id)
+    if status == Status.ALREADY_ADDED:
+        flash('Movie already in the library')
+        return redirect(url_for('user_movies', id=current_user.id))
+    elif status == Status.OK:
+        flash('Added')
+        return redirect(url_for('user_movies', id=current_user.id))
+
+
 
 
 if __name__ == '__main__':

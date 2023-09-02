@@ -93,20 +93,35 @@ button[type="submit"] {
   color: #888;
 }
 
+
 .movie-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-}
+  gap: 9px;
+  width: calc(100% - 17px)
 
-.btn {
+    }
+
+.btn{
+
+  box-sizing: border-box;
   background-color: #337ab7;
   color: #fff;
-  padding: 5px 10px;
+  padding: 5px 10px 5px 10px;
   border: none;
   cursor: pointer;
-  margin: 5px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   text-decoration: none;
 }
+
+    .btn:nth-child(4) {
+        flex:  100%;
+        margin-top: 0;
+        text-align: center;
+    }
+
 
 .filter-links a {
     color: #fff;
@@ -222,6 +237,28 @@ button[type="submit"] {
   border: 5px solid #ccc;
 }
 
+.random-links{
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #337ab7;
+width: 35%;
+margin: 5px 5px 5px 5px;
+padding: 5px 5px 5px 5px;
+
+}
+.btn-index{
+  text-align: center;
+  box-sizing: border-box;
+  color: #fff;
+  padding: 5px 5px 5px 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-decoration: none;
+
+}
+
 /* Styles for the review class */
 .review {
     margin-top: 20px;
@@ -264,9 +301,53 @@ button[type="submit"] {
 text-align: right;
 }
 
-.gpt-link {
-    width: calc(100% - 20px); /* Width adjusted to match the three links above */
-    margin-top: 10px; /* Adjust as needed */
+.rec-title  {
+  color: #888;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
 }
 
+.rec-title .rec-title-mid  {
+  color: #337ab7;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
+}
 
+.recomended-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 9px;
+  width: calc(100% - 17px)
+}
+
+.btn-rec{
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #337ab7;
+  color: #fff;
+  padding: 5px 10px 5px 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-decoration: none;
+  width: 100%;
+}
+.btn-rec{
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #337ab7;
+  color: #fff;
+  padding: 5px 10px 5px 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-decoration: none;
+  width: 100%;
+}

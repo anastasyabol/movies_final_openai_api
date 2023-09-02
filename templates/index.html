@@ -39,15 +39,25 @@
 {% endif %}
         </div></div>
         <div class="movie-details">
-            <div class="movie-title">{{ movie['title'] }}</div>
+              {% if movie['title']|length < 27 %}
+ <div class="movie-title">{{ movie['title'] }}</div>
+{% else %}
+ <div class="movie-title">{{ movie['title'][:27] }}...</div>
+{% endif %}
             <div class="movie-year">{{ movie['year'] }}</div>
+            <br>
 
         </div>
+            <div class="random-links"><a href="/user/{{ user_id }}/add/{{ movie['id'] }}" class="btn-index">Add to my library</a></div>
+            <div class="random-links"><a href="/" class="btn-index">Random</a></div>
         <div class="movie-plot">{% if movie['plot'] != "N/A" %}
 {{ movie['plot'] }}
 {% else %}
  ...
-{% endif %}</div>
+{% endif %}
+            <br><br>
+
+        </div>
     </div>
 
         {% endblock %}

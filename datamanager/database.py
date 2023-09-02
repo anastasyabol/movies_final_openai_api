@@ -22,6 +22,9 @@ class Movie(db.Model):
     imdbID = db.Column(db.String)
     plot = db.Column(db.String)
     notes = db.Column(db.String)
+    recomend1 = db.Column(db.String)
+    recomend2 = db.Column(db.String)
+    recomend3 = db.Column(db.String)
     user_movies = db.relationship('UserMovie', backref='movie', lazy=True)
 
 
@@ -83,8 +86,3 @@ class Review(db.Model):
         self.review_text = review_text
         self.review_rating = review_rating
         self.review_date = review_date
-
-
-
-with app.app_context():
-    pass
