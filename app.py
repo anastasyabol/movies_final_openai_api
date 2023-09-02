@@ -1,12 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from os import getenv
-from datamanager.json_data_manager import *
 from datamanager.SQLite_data_manager import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 import random
 from datetime import date
-from api import api_bp  # Importing the API blueprint
 
 app = Flask(__name__)
 #app.register_blueprint(api_bp, url_prefix='/api')  # Registering the blueprint
