@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from sqlalchemy_serializer import SerializerMixin
+import json
 
 # Create a Flask app instance
 app = Flask(__name__)
@@ -11,7 +13,7 @@ db = SQLAlchemy()
 db.init_app(app)
 
 
-class Movie(db.Model):
+class Movie(db.Model, SerializerMixin):
     __tablename__ = "movies"
     id = db.Column('movie_id', db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(50))
@@ -27,8 +29,41 @@ class Movie(db.Model):
     recomend3 = db.Column(db.String)
     user_movies = db.relationship('UserMovie', backref='movie', lazy=True)
 
+    # def __init__(self, title, director, year, rating, img, imdbID, plot, notes, recomend1, recomend2, recomend3):
+    #     self.title = title
+    #     self.director = director
+    #     self.year = year
+    #     self.rating = rating
+    #     self.img = img
+    #     self.imdbID = imdbID
+    #     self.plot = plot
+    #     self.notes = notes
+    #     self.recomend1 = recomend1
+    #     self.recomend2 = recomend2
+    #     self.recomend3 = recomend3
+    #
+    # def __dict__(self):
+    #     return {
+    #         'id': self.id,
+    #         'title': self.title,
+    #         'director': self.director,
+    #         'year': self.year,
+    #         'rating': self.rating,
+    #         'img': self.img,
+    #         'imdbID': self.imdbID,
+    #         'plot': self.plot,
+    #         'notes': self.notes,
+    #         'recomend1': self.recomend1,
+    #         'recomend2': self.recomend2,
+    #         'recomend3': self.recomend3
+    #     }
+    #
+    @staticmethod
+    def to_json(self):
+        return self.to_dict()
 
-class UserMovie(db.Model):
+
+class UserMovie(db.Model, SerializerMixin):
     __tablename__ = "user_movies"
     row_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user_data.user_id"))
@@ -36,6 +71,10 @@ class UserMovie(db.Model):
     user_notes = db.Column(db.String)
     user_rating = db.Column(db.Float)
     user = db.relationship('User', backref='user_movies', lazy=True)
+
+    @staticmethod
+    def to_json(self):
+        return self.to_dict()
 
 
 class User(db.Model, UserMixin):

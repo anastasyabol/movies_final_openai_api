@@ -4,7 +4,8 @@ from datamanager.data_manager_interface import DataManagerInterface, Status
 from datamanager.database import *
 from datamanager.omdb_url import omdb_url
 import requests
-from datamanager.gpt import gpt_recomendation
+from datamanager.gpt import gpt_recomendation, gpt_recomendation_new
+
 
 
 class SQLiteDataManager(DataManagerInterface):
@@ -33,14 +34,11 @@ class SQLiteDataManager(DataManagerInterface):
 
             user_movies = query.all()
             for movie, user_rating, user_notes in user_movies:
-                movie_data = vars(movie)
-                print(movie_data['notes'])
                 if user_rating is not None:
-                    movie_data['rating'] = user_rating
+                   movie.rating = user_rating
                 if user_notes is not None:
-                    movie_data['notes'] = user_notes
-                result.append(movie_data)
-            session.close()
+                   movie.notes = user_notes
+                result.append(movie)
         return result
 
     def add_new_movie(self, user_id: int, new_movie: str):
@@ -85,6 +83,23 @@ class SQLiteDataManager(DataManagerInterface):
             session.commit()
             session.close()
             return Status.OK
+
+
+    def delete_from_db(self, movie_id):
+        session = self.Session()
+        query = session.query(Movie).filter(Movie.id == movie_id)
+
+        # Attempt to get the row
+        row = query.one_or_none()
+
+        if row:
+            # Delete the row and return True
+            session.delete(row)
+            session.commit()
+            return True
+        else:
+            # Return False if the row doesn't exist
+            return False
 
     def add_new_movie_to_db(self, new_movie_title, user_id=0, imdbID=None):
         session = self.Session()
@@ -216,46 +231,73 @@ class SQLiteDataManager(DataManagerInterface):
             else:
                 return Status.NOT_FOUND
 
+    def _update_recommendations(self, movie, recommend_function):
+        rec1, rec2, rec3 = recommend_function(movie.title)
+        movie.recomend1 = rec1
+        movie.recomend2 = rec2
+        movie.recomend3 = rec3
+
+    def _get_movie_statuses(self, imdb_ids):
+        statuses = [self.movie_by_imdbID(imdb_id) for imdb_id in imdb_ids]
+        return statuses
+
     def recommended_movies(self, movie_id):
         session = self.Session()
-        movie_query = session.query(Movie).filter_by(id=movie_id)
-        movie = movie_query.first()
-        print("********")
-        print(movie)
+        movie = session.query(Movie).filter_by(id=movie_id).first()
 
         if movie:
-            if movie.recomend1 is None or movie.recomend2 is None or movie.recomend3 is None:
-                rec1, rec2, rec3 = gpt_recomendation(movie.title)
-                if movie.recomend1 is None:
-                    movie.recomend1 = rec1
-                if movie.recomend2 is None:
-                    movie.recomend2 = rec2
-                if movie.recomend3 is None:
-                    movie.recomend3 = rec3
+            if any(recommendation is None for recommendation in [movie.recomend1, movie.recomend2, movie.recomend3]):
+                self._update_recommendations(movie, gpt_recomendation)
                 session.commit()
                 session.flush()
 
             imdb_ids = [movie.recomend1, movie.recomend2, movie.recomend3]
-            statuses = []
-
-            for imdb_id in imdb_ids:
-                status = self.movie_by_imdbID(imdb_id)
-                statuses.append(status)
+            statuses = self._get_movie_statuses(imdb_ids)
 
             if all(status == Status.OK for status in statuses):
-                # All requests were successful, proceed with querying the database
                 movies_query = session.query(Movie).filter(Movie.imdbID.in_(imdb_ids)).limit(3)
                 rec_movies_data = movies_query.all()
 
                 for movie in rec_movies_data:
                     print(movie.imdbID, movie.id, movie.title)
+
                 return rec_movies_data
             else:
                 return Status.NOT_FOUND
-
         else:
             return Status.NOT_FOUND
 
-db_uri = "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
-data_manager = SQLiteDataManager(db_uri)
-print(data_manager.recommended_movies(86))
+    def recommend_new_movies(self, movie_id):
+        session = self.Session()
+        movie = session.query(Movie).filter_by(id=movie_id).first()
+
+        if movie:
+            # Reset recommendations to None (or NULL)
+            movie.recomend1 = None
+            movie.recomend2 = None
+            movie.recomend3 = None
+            session.commit()
+
+            self._update_recommendations(movie, gpt_recomendation_new)
+            session.commit()
+            session.flush()
+
+            imdb_ids = [movie.recomend1, movie.recomend2, movie.recomend3]
+            statuses = self._get_movie_statuses(imdb_ids)
+
+            if all(status == Status.OK for status in statuses):
+                movies_query = session.query(Movie).filter(Movie.imdbID.in_(imdb_ids)).limit(3)
+                rec_movies_data = movies_query.all()
+
+                for movie in rec_movies_data:
+                    print(movie.imdbID, movie.id, movie.title)
+
+                return rec_movies_data
+            else:
+                return Status.NOT_FOUND
+        else:
+            return Status.NOT_FOUND
+
+# db_uri = "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
+# data_manager = SQLiteDataManager(db_uri)
+# print(data_manager.recommended_movies(86))

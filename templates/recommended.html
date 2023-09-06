@@ -25,9 +25,10 @@
 <div class="flash">{{msg}}</div>
 {% endfor %}</div>
 
-<div class="rec-title"> If you liked <span class="rec-title-mid"> {{ current_movie['title'] }}</span> try:</div>
+<div class="rec-title"> If you liked <span class="rec-title-mid"> {{ current_movie['title'] }}</span> try:
+</div>
 
-<div class="movie-flex">
+<div class="movie-flex-rec">
     {% if movies != None %}
     {% for movie in movies %}
     {% if movie['imdbID'] != current_movie['imdbID'] %}
@@ -61,7 +62,8 @@
     {% else %}
     Start adding movies :)
     {% endif %}
-</div>
 
+</div>
+<br> <br> <br>
+    <div class="regenerate"><a href="{{ url_for('new_rec_movie', id=user_id, movie_id=current_movie['id']) }}" class="btn-regenerate">Regenerate Recommendations</a></div>
 {% endblock %}
-   <!-- <a href="/user/{{ user_id }}/update/{{ movie['id'] }}" class="btn-rec">Add to my library</a> */ -->

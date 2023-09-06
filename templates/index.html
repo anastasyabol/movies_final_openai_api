@@ -47,8 +47,8 @@
             <div class="movie-year">{{ movie['year'] }}</div>
             <br>
 
-        </div>
-            <div class="random-links"><a href="/user/{{ user_id }}/add/{{ movie['id'] }}" class="btn-index">Add to my library</a></div>
+        </div>{% if username != "anonymous" %}
+            <div class="random-links"><a href="/user/{{ user_id }}/add/{{ movie['id'] }}" class="btn-index">Add to my library</a></div>{% endif %}
             <div class="random-links"><a href="/" class="btn-index">Random</a></div>
         <div class="movie-plot">{% if movie['plot'] != "N/A" %}
 {{ movie['plot'] }}

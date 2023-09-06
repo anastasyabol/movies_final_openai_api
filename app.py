@@ -7,7 +7,7 @@ import random
 from datetime import date
 
 app = Flask(__name__)
-#app.register_blueprint(api_bp, url_prefix='/api')  # Registering the blueprint
+# app.register_blueprint(api_bp, url_prefix='/api')  # Registering the blueprint
 app.config["SECRET_KEY"] = getenv("SECRET_KEY", default="secret_key_example")
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     "sqlite:////Users/anastasyabolshem/PycharmProjects/masterschool/movies_107.3/datamanager/movies.sqlite"
@@ -20,7 +20,6 @@ db.init_app(app)
 @login_manager.user_loader
 def load_user(user_id: str):
     """User loader function for Flask-Login to load a user given the user_id"""
-    print('***************')
     return User.get(user_id)
 
 
@@ -29,7 +28,7 @@ def load_user(user_id: str):
 def index():
     """Default route for the index page. Getting a random movie from the data manager for index page"""
     flash("Random movie for tonight...")
-    random_movie = random.choice(data_manager.get_user_movies(0))
+    random_movie = data_manager.get_user_movies(0)[0]
     username = current_user.username if current_user.is_authenticated else "anonymous"
     user_id = current_user.id if current_user.is_authenticated else None
     return render_template('index.html', username=username, user_id=user_id, movie=random_movie)
@@ -103,7 +102,7 @@ def user_movies(id: int, sort: int = 0):
     Using Status object (enum) for statuses of added movies"""
     if id != int(current_user.id):
         return render_template('error.html', error=403, username=current_user.username, user_id=current_user.id), 403
-    #Without sorting movie that was just added will be appear first ([::-1])
+    # Without sorting movie that was just added will be appear first ([::-1])
     user_movies = data_manager.get_user_movies(id, sort)[::-1] if sort == 0 else data_manager.get_user_movies(id, sort)
     if len(user_movies) == 0:
         user_movies = None
@@ -146,13 +145,10 @@ def update_movie(id: int, movie_id: int):
     notes = movie_data.get('notes', "")
     if request.method == "POST":
         title_upd = request.form['title']
-        director_upd = request.form['director']
         rating_upd = request.form['rating']
         notes_upd = request.form['notes']
         # Check if the title and director fields are empty
-        if title_upd == "" or director_upd == "":
-            flash("Title/Director can't be empty")
-            return redirect(request.url)
+
         # Check if the rating might be converted to float
         try:
             float(rating_upd)
@@ -215,7 +211,6 @@ def review(id: int, movie_id: int):
                                img=img, imdbID=imdbID, reviews=reviews)
 
 
-
 # SORT
 @app.route("/user/<int:id>/sort/<int:sort>", methods=["GET"])
 @login_required
@@ -235,12 +230,27 @@ def recommend_movie(id: int, rec: int):
     if id != int(current_user.id):
         return render_template('error.html', error=403, username=current_user.username, user_id=current_user.id), 403
     current_movie_data = data_manager.movie_info_by_id(rec)
-    print(current_movie_data)
     recommended_movies = data_manager.recommended_movies(rec)
     if recommended_movies == Status.NOT_FOUND:
         return render_template('error.html', error=404, username=current_user.username, user_id=current_user.id), 404
     return render_template('recommended.html', username=current_user.username, movies=recommended_movies,
-                               user_id=current_user.id, current_movie=current_movie_data)
+                           user_id=current_user.id, current_movie=current_movie_data)
+
+
+@app.route("/user/<int:id>/new_rec/<int:movie_id>", methods=["POST", "GET"])
+@login_required
+def new_rec_movie(id: int, movie_id: int):
+    """"""
+    if id != int(current_user.id):
+        return render_template('error.html', error=403, username=current_user.username, user_id=current_user.id), 403
+    current_movie_data = data_manager.movie_info_by_id(movie_id)
+    new_rec = data_manager.recommend_new_movies(movie_id)
+    if new_rec == Status.NOT_FOUND:
+        return render_template('error.html', error=404, username=current_user.username, user_id=current_user.id), 404
+
+    return render_template('recommended.html', username=current_user.username, movies=new_rec,
+                           user_id=current_user.id, current_movie=current_movie_data)
+
 
 @app.route("/user/<int:id>/add/<int:movie_id>", methods=["POST", "GET"])
 @login_required
@@ -256,8 +266,5 @@ def add_movie(id: int, movie_id: int):
         return redirect(url_for('user_movies', id=current_user.id))
 
 
-
-
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=True)
-

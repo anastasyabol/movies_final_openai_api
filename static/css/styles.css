@@ -54,6 +54,15 @@ button[type="submit"] {
     margin: 20px;
     gap: 40px;
 }
+.movie-flex-rec {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px;
+    gap: 40px;
+    flex-direction: row;
+}
 
 
 .movie {
@@ -350,4 +359,25 @@ text-align: right;
   margin-bottom: 5px;
   text-decoration: none;
   width: 100%;
+}
+
+.btn-regenerate{
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #337ab7;
+  color: #fff;
+  padding: 5px 10px 5px 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-decoration: none;
+
+}
+
+.regenerate{
+display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
 }
