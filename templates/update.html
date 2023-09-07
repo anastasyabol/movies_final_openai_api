@@ -30,7 +30,7 @@
 <label for="year">Year:</label> <br>
 <input type="text" id="year" name="year" value="{{ year }}" readonly><br><br>
 <label for="rating">Rating:</label> <br>
-<input type="text" id="rating" name="rating" value="{{ rating }}"><br><br>
+<input type="number" id="rating" name="rating" value="{{ rating }}" min="1" max="10"><br><br>
 <label for="notes">Notes:</label> <br>
 <textarea id="notes" name="notes" rows="5" cols="21" >{{ notes }} </textarea><br><br>
 <input class="btn" type="submit" value="Update">

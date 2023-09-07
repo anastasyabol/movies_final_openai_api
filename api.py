@@ -13,13 +13,8 @@ api_bp = Blueprint('api', __name__, url_prefix='/api')  # Create a Blueprint for
 
 @api_bp.route('/')
 def index():
-    random_movie = data_manager.get_user_movies(0)
-    return random_movie[0].to_dict()
-
-
-# Define a route to get random movie data as JSON
-@api_bp.route('/random_movie', methods=['GET'])
-def get_random_movie():
+    """ Route for the API index page. Returns a random movie's data as a JSON response.
+        """
     random_movie = data_manager.get_user_movies(0)
     return random_movie[0].to_dict()
 
@@ -27,6 +22,10 @@ def get_random_movie():
 # Define a route to get user's movies data as JSON
 @api_bp.route('/user/<int:id>', methods=['GET', 'POST'])
 def user_movies(id: int, sort: int = 0):
+    """ Route to get user's movies data as JSON or add a new movie to the user's library.
+        If the request method is POST, it adds a new movie to the user's library.
+        If the request method is GET, it retrieves the user's movies data as JSON.
+        """
     if request.method == 'POST':
         new_movie = request.get_json()
         print(new_movie['title'])
@@ -44,6 +43,9 @@ def user_movies(id: int, sort: int = 0):
 
 @api_bp.route('/user/<int:id>/update/<int:movie_id>', methods=['POST'])
 def update_movies(id: int, movie_id: int):
+    """ Route to update a movie's details in the user's library.
+        Accepts a JSON request to update the movie's rating and notes.
+        """
     update_movie = request.get_json()
     movie_data = data_manager.movie_info(id, movie_id)
     if movie_data is None:
@@ -63,6 +65,8 @@ def update_movies(id: int, movie_id: int):
 
 @api_bp.route('/user/<int:id>/delete/<int:movie_id>', methods=['DELETE'])
 def delete_movies(id: int, movie_id: int):
+    """ Route to delete a movie from the user's library.
+        """
     if not data_manager.delete_movie(id, movie_id):
         return jsonify({'Status': 'Error. Not found'})
     else:
@@ -71,6 +75,9 @@ def delete_movies(id: int, movie_id: int):
 
 @api_bp.route('/delete/<int:movie_id>', methods=['DELETE'])
 def delete_movies_from_db(movie_id: int):
+    """
+    Route to delete a movie from the database.
+    """
     if not data_manager.delete_from_db(movie_id):
         return jsonify({'Status': 'Error. Not found'})
     else:
